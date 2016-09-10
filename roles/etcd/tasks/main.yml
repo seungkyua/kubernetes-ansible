@@ -1,12 +1,14 @@
 ---
-- name: Install etcd
+- name: install etcd
   apt: name=etcd update_cache=yes
 
-- name: Write etcd config file
+- name: copy etcd config
   template: src=etcd.conf.j2 dest=/etc/default/etcd
 
-- name: Enable etcd
+- name: enable etcd systemd
   service: name=etcd enabled=yes
 
-- name: Restart etcd
+- name: restart etcd
   service: name=etcd state=restarted
+  tags:
+    - restart etcd

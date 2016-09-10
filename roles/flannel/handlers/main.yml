@@ -4,6 +4,9 @@
   notify:
     - stop docker
     - delete docker0
+    - copy docker-config
+    - run docker-config
+    - remove docker-config
     - start docker
   when: "'kube-nodes' in group_names"
 
@@ -14,6 +17,19 @@
 - name: delete docker0
   command: ip link delete docker0
   ignore_errors: yes
+  when: "'kube-nodes' in group_names"
+
+- name: copy docker-config
+  template: src=docker-config.sh.j2 dest=~/docker-config.sh mode=755
+  when: "'kube-nodes' in group_names"
+
+- name: run docker-config
+  command: ~/docker-config.sh
+  ignore_errors: true
+  when: "'kube-nodes' in group_names"
+
+- name: remove docker-config
+  file: name=~/docker-config.sh state=absent
   when: "'kube-nodes' in group_names"
 
 - name: start docker

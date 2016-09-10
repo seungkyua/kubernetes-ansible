@@ -1,46 +1,45 @@
 ---
-- name: Ensure that APT works with the https method, that CA certificates are installed
+- name: install apt-transport-https ca-certificates
   apt: name={{ item }}
   with_items:
     - apt-transport-https
     - ca-certificates
 
-- name: Add the new GPG key
+- name: add GPG key
   apt_key: keyserver=hkp://p80.pool.sks-keyservers.net:80 \
            id=58118E89F3A912897C070ADBF76221572C52609D
 
-- name: Add correct /etc/apt/sources.list.d file
+- name: add docker.list
   copy:
     src: "docker.{{ ubuntu_release }}.list"
     dest: "/etc/apt/sources.list.d"
     owner: root
 
-- name: Update apt
+- name: apt-get update
   apt: update_cache=yes
 
-- name: Install the recommended package. linux-image-extra-$(uname -r)
+- name: install linux-image-extra kube-deploy
   apt: name=linux-image-extra-{{ kube_depoloy_uname_r }}
   when: "'kube-deploy' in group_names"
-#  when: inventory_hostname in groups.kube-depoloy
 
-- name: Install the recommended package. linux-image-extra-$(uname -r)
+- name: install linux-image-extra kube-masters kube-nodes
   apt: name=linux-image-extra-{{ uname_r }}
-  when: "('kube-masters' in group_names) or ('kube-nodes' in group_names)" 
+  when: "('kube-masters' in group_names) or ('kube-nodes' in group_names)"
 
-- name: Install Docker
+- name: install docker
   apt: name=docker-engine
 
-- name: Add the user {{ add_user }} with a group of 'docker'
+- name: add docker group
   user: name={{ add_user }} group=docker
 
-- name: Copy docker config file
+- name: copy docker config
   copy:
     src: "docker"
     dest: "/etc/default"
     mode: 0755
     owner: root
 
-- name: Copy docker.service
+- name: copy docker.service
   copy:
     src: "docker.service"
     dest: "/lib/systemd/system"
@@ -50,8 +49,10 @@
 - name: reload systemd
   shell: systemctl daemon-reload
 
-- name: Start the docker daemon
+- name: restart docker
   service: name=docker state=restarted enabled=yes
+  tags:
+    - restart docker
 
 - name: export DOCKER_HOST
   lineinfile:

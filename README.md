@@ -53,3 +53,38 @@ $ ansible-playbook -i hosts 02-etcd.yml
 $ ansible-playbook -i hosts 03-flannel.yml
 $ ansible-playbook -i hosts 04-kubernetes.yml
 ```
+
+
+## restart service ##
+
+ - restart docker
+
+```
+$ sudo ansible-playbook -i hosts --tags="restart docker" 01-install-docker.yml
+```
+
+ - restart etcd
+
+```
+$ ansible-playbook -i hosts --tags="restart etcd" 02-etcd.yml
+```
+
+ - restart flannel
+
+```
+$ ansible-playbook -i hosts --tags="restart flannel" 03-flannel.yml
+```
+
+ - restart kubernetes
+
+```
+$ ansible-playbook -i hosts --tags="restart kube-apiserver,restart kube-controller-manager,restart kube-scheduler,restart kube-proxy,restart kubelet" 04-kubernetes.yml
+```
+
+
+
+
+
+
+
+
