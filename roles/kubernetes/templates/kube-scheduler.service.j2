@@ -1,0 +1,13 @@
+[Unit]
+Description=Kubernetes Scheduler
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=root
+EnvironmentFile=-/etc/default/kube-scheduler
+ExecStart=/usr/local/bin/kube-scheduler $KUBE_SCHEDULER_OPTS
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

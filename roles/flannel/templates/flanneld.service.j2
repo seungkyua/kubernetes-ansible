@@ -1,0 +1,17 @@
+[Unit]
+Description=flanneld Service
+#After=etcd.service
+#Requires=etcd.service
+
+[Service]
+EnvironmentFile=/etc/default/flanneld
+PermissionsStartOnly=true
+User=root
+ExecStart=/usr/bin/flanneld -etcd-endpoints=${FLANNEL_ETCD} $FLANNEL_OPTIONS
+Restart=always
+RestartSec=10s
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+Alias=flanneld.service

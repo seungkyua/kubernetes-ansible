@@ -1,0 +1,17 @@
+---
+- name: install package
+  hosts: kube-deploy kube-masters kube-nodes
+  remote_user: root
+
+  tasks:
+    - include_vars: group_vars/all
+
+    - name: Install apt packages
+      apt: name={{ item }}  update_cache=yes
+      with_items:
+        - bridge-utils
+        - linux-libc-dev
+        - golang
+        - gcc
+        - curl
+        - git

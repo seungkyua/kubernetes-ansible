@@ -1,0 +1,40 @@
+---
+- name: create the user
+  hosts: all
+  remote_user: root
+
+  tasks:
+    - include_vars: group_vars/all
+
+    - name: Add the {{ add_user }} user
+      user: name={{ add_user }} groups=sudo createhome=yes shell=/bin/bash
+            password={{ add_user_password }} append=yes
+            generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
+
+    - name: Set up authorized_keys for the {{ add_user }}
+      authorized_key: user={{ add_user }} key="{{ lookup('file', '/home/{{ add_user }}/.ssh/id_rsa.pub') }}"
+
+    - name: sudo 
+      lineinfile:
+        "dest=/etc/sudoers state=present regexp='^{{ add_user }} ALL='
+	 line='{{ add_user }} ALL=(ALL) NOPASSWD:ALL' validate='visudo -cf %s'"
+
+    - name: export GOPATH
+      lineinfile:
+        "dest=/home/{{ add_user }}/.bashrc state=present regexp='^export GOPATH' line='export GOPATH=$HOME/go_workspace:$HOME/go_workspace/src/k8s.io/kubernetes/Godeps/_workspace'"
+
+    - name: export PATH
+      lineinfile:
+        "dest=/home/{{ add_user }}/.bashrc state=present regexp='^export PATH'
+         line='export PATH=$HOME/go_workspace/bin:$PATH'"
+
+    - name: export KUBE_ROOT
+      lineinfile:
+        "dest=/home/{{ add_user }}/.bashrc state=present regexp='^export KUBE_ROOT'
+         line='export KUBE_ROOT=/home/$HOME/go_workspace/src/k8s.io/kubernetes'"
+
+    - name: Copy hosts file
+      copy:
+        src: "files/hosts"
+        dest: "/etc"
+        owner: root

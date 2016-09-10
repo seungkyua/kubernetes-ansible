@@ -1,0 +1,11 @@
+KUBE_APISERVER_OPTS="--insecure-bind-address=0.0.0.0 \
+--insecure-port=8080 \
+--etcd-servers=http://127.0.0.1:4001 \
+--logtostderr=true \
+--service-cluster-ip-range={{ service_cluster_ip_range }} \
+--admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,\
+ResourceQuota,DenyEscalatingExec,SecurityContextDeny \
+--service-node-port-range={{ service_node_port_range }} \
+--client-ca-file=/srv/kubernetes/ca.crt \
+--tls-cert-file=/srv/kubernetes/server.cert \
+--tls-private-key-file=/srv/kubernetes/server.key"

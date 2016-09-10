@@ -1,0 +1,13 @@
+[Unit]
+Description=Kubernetes Proxy Server
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=root
+EnvironmentFile=-/etc/default/kube-proxy
+ExecStart=/usr/local/bin/kube-proxy $KUBE_PROXY_OPTS
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

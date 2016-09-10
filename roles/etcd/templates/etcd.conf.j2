@@ -1,0 +1,29 @@
+DAEMON_ARGS="--name {{ inventory_hostname }} \
+--data-dir=/ext/data/etcd \
+{% if inventory_hostname == 'kube-master01' %}
+--initial-advertise-peer-urls http://{{ hostvars[inventory_hostname]['ansible_' + master01_iface]['ipv4']['address'] }}:2380 \
+{% else %}
+--initial-advertise-peer-urls http://{{ hostvars[inventory_hostname]['ansible_' + master02_iface]['ipv4']['address'] }}:2380 \
+{% endif %}
+{% if inventory_hostname == 'kube-master01' %}
+--listen-peer-urls http://{{ hostvars[inventory_hostname]['ansible_' + master01_iface]['ipv4']['address'] }}:2380 \
+{% else %}
+--listen-peer-urls http://{{ hostvars[inventory_hostname]['ansible_' + master02_iface]['ipv4']['address'] }}:2380 \
+{% endif %}
+{% if inventory_hostname == 'kube-master01' %}
+--listen-client-urls http://{{ hostvars[inventory_hostname]['ansible_' + master01_iface]['ipv4']['address'] }}:2379,http://127.0.0.1:2379,\
+http://{{ hostvars[inventory_hostname]['ansible_' + master01_iface]['ipv4']['address'] }}:4001,\
+http://127.0.0.1:4001 \
+{% else %}
+--listen-client-urls http://{{ hostvars[inventory_hostname]['ansible_' + master02_iface]['ipv4']['address'] }}:2379,http://127.0.0.1:2379,\
+http://{{ hostvars[inventory_hostname]['ansible_' + master02_iface]['ipv4']['address'] }}:4001,\
+http://127.0.0.1:4001 \
+{% endif %}
+{% if inventory_hostname == 'kube-master01' %}
+--advertise-client-urls http://{{ hostvars[inventory_hostname]['ansible_' + master01_iface]['ipv4']['address'] }}:2379 \
+{% else %}
+--advertise-client-urls http://{{ hostvars[inventory_hostname]['ansible_' + master02_iface]['ipv4']['address'] }}:2379 \
+{% endif %}
+--initial-cluster-token etcd-cluster-1 \
+--initial-cluster {{ groups['kube-masters'][0] }}=http://{{ hostvars[groups['kube-masters'][0]]['ansible_' + master01_iface]['ipv4']['address'] }}:2380,{{ groups['kube-masters'][1] }}=http://{{ hostvars[groups['kube-masters'][1]]['ansible_' + master02_iface]['ipv4']['address'] }}:2380 \
+--initial-cluster-state new"

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+GO_HOME=${HOME}/go_workspace
+KUBE_HOME=${GO_HOME}/src/k8s.io/kubernetes
+KUBE_VERSION="{{ kube_version }}"
+ANSIBLE_HOME=${HOME}/{{ ansible_dir }}
+
+export GOPATH=${GO_HOME}:${KUBE_HOME}/Godeps/_workspace
+export PATH=${GO_HOME}/bin:$PATH
+
+function chdir() {
+    cd $1
+}
+
+if [ ! -d ${KUBE_HOME} ]; then
+    mkdir -p ${GO_HOME}/src/k8s.io
+    chdir ${GO_HOME}/src/k8s.io
+    go get -u github.com/jteeuwen/go-bindata/go-bindata
+    git clone https://github.com/kubernetes/kubernetes.git
+    chdir ${KUBE_HOME}
+    git checkout -b ${KUBE_VERSION} origin/${KUBE_VERSION}
+fi
+
+chdir ${KUBE_HOME}
+if [ ! -d ${KUBE_HOME}/_output ]; then
+    make all
+fi
+
+mkdir -p ${ANSIBLE_HOME}/roles/kubernetes/files
+cp _output/local/bin/linux/amd64/kube* ${ANSIBLE_HOME}/roles/kubernetes/files

@@ -1,0 +1,11 @@
+---
+# This playbook installs etcd cluster.
+
+- name: Setup etcd
+  hosts: kube-masters
+  remote_user: "{{add_user}}"
+  become: true
+  become_user: root
+
+  roles:
+    - etcd

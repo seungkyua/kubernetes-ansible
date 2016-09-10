@@ -1,0 +1,83 @@
+---
+# set flannel data into etcd
+- name: Copy the configure script
+  template: src=config-flannel.sh.j2 dest=~/config-flannel.sh mode=755
+  when: inventory_hostname == 'kube-master01'
+
+- name: Run the configure script
+  command: ~/config-flannel.sh
+  when: inventory_hostname == 'kube-master01'
+
+- name: Remove the configure script
+  file: name=~/config-flannel.sh state=absent
+  when: inventory_hostname == 'kube-master01'
+
+# flannel download, build, install
+- name: Copy download flannel script
+  template: src=download-flannel.sh.j2 dest=~/download-flannel.sh
+        owner={{ add_user }} mode=755
+  become: yes
+  become_user: "{{ add_user }}"
+  when: "'kube-deploy' in group_names"
+
+- name: Run the download flannel script
+  command: ~/download-flannel.sh owner={{ add_user }}
+  become: yes
+  become_user: "{{ add_user }}"
+  when: "'kube-deploy' in group_names"
+
+- name: Remove the download flannel script
+  file: name=~/download-flannel.sh owner={{ add_user }} state=absent
+  become: yes
+  become_user: "{{ add_user }}"
+  when: "'kube-deploy' in group_names"
+
+- name: Copy flanneld file
+  copy: src=flanneld dest=/usr/bin/flanneld owner=root mode=0755
+  when: "'kube-nodes' in group_names"
+
+- name: Copy flanneld.service
+  template: src=flanneld.service.j2 dest=/lib/systemd/system/flanneld.service
+            owner=root mode=0644
+  when: "'kube-nodes' in group_names"
+
+- name: Resize MTU
+  command: ip link set dev {{ hostvars[inventory_hostname]['ansible_' + node01_iface]['device'] }} mtu 1500
+  when: inventory_hostname == 'kube-node01'
+
+- name: Resize MTU
+  command: ip link set dev {{ hostvars[inventory_hostname]['ansible_' + node02_iface]['device'] }} mtu 1500
+  when: inventory_hostname == 'kube-node02'
+
+- name: Copy flanneld config file
+  template: src=flanneld.j2 dest=/etc/default/flanneld
+  when: "'kube-nodes' in group_names"
+
+- name: reload systemd
+  shell: systemctl daemon-reload
+  when: "'kube-nodes' in group_names"
+
+- name: Launch Flannel
+  service: name=flanneld state=restarted enabled=yes
+  when: "'kube-nodes' in group_names"
+
+- name: stop docker
+  service: name=docker state=stopped
+  when: "'kube-nodes' in group_names"
+
+- name: Copy the docker-config script
+  template: src=docker-config.sh.j2 dest=~/docker-config.sh mode=755
+  when: "'kube-nodes' in group_names"
+
+- name: Run the docker-config script
+  command: ~/docker-config.sh
+  ignore_errors: true
+  when: "'kube-nodes' in group_names"
+
+- name: Remove the docker-config script
+  file: name=~/docker-config.sh state=absent
+  when: "'kube-nodes' in group_names"
+
+- name: Restart docker
+  service: name=docker state=restarted
+  when: "'kube-nodes' in group_names"

@@ -1,0 +1,13 @@
+[Unit]
+Description=Kubernetes Controller Manager
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=root
+EnvironmentFile=-/etc/default/kube-controller-manager
+ExecStart=/usr/local/bin/kube-controller-manager $KUBE_CONTROLLER_MANAGER_OPTS
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

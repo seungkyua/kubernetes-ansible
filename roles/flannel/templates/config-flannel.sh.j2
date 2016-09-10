@@ -1,0 +1,6 @@
+#!/bin/bash
+
+{% if inventory_hostname == 'kube-master01' %}
+exec curl -s -L http://{{ groups['kube-masters'][0] }}:4001/v2/keys/coreos.com/network/config \
+-XPUT -d value='{"Network": "{{ flannel_net }}", "SubnetLen": 24, "Backend": {"Type": "vxlan"}}'
+{% endif %}

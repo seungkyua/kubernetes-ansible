@@ -1,0 +1,8 @@
+- name: Setup flannel
+  hosts: kube-deploy kube-masters kube-nodes
+  remote_user: "{{add_user}}"
+  become: true
+  become_user: root
+
+  roles:
+    - flannel

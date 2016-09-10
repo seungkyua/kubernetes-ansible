@@ -1,0 +1,10 @@
+[kube-deploy]
+kube-deploy
+
+[kube-masters]
+kube-master01
+kube-master02
+
+[kube-nodes]
+kube-node01
+kube-node02

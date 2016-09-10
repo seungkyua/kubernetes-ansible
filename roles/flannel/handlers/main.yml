@@ -1,0 +1,21 @@
+---
+- name: restart flannel
+  service: name=flanneld state=restarted
+  notify:
+    - stop docker
+    - delete docker0
+    - start docker
+  when: "'kube-nodes' in group_names"
+
+- name: stop docker
+  service: name=docker state=stopped
+  when: "'kube-nodes' in group_names"
+
+- name: delete docker0
+  command: ip link delete docker0
+  ignore_errors: yes
+  when: "'kube-nodes' in group_names"
+
+- name: start docker
+  service: name=docker state=started
+  when: "'kube-nodes' in group_names"

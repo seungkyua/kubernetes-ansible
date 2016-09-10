@@ -1,0 +1,13 @@
+[Unit]
+Description=Kubernetes Kubelet
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=root
+EnvironmentFile=-/etc/default/kubelet
+ExecStart=/usr/local/bin/kubelet $KUBELET_OPTS
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,8 @@
+---
+# This playbook setup docker package
+
+- hosts: kube-deploy kube-masters kube-nodes
+  remote_user: root
+
+  roles:
+    - docker
