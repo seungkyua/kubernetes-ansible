@@ -12,7 +12,7 @@ $ sudo apt-get update
 $ sudo apt-get install -y ansible python2.7 python-minimal
 ```
 
- - Group names and node names can not be changed
+ - Group names and node names can not be changed in `hosts` file
 
 ```
 [kube-deploy]
@@ -25,6 +25,18 @@ kube-master02
 [kube-nodes]
 kube-node01
 kube-node02
+
+[kube-masters:vars]
+kube-master01-iface=eno49
+kube-master01-ip=192.168.30.13
+kube-master02-iface=ens2f0
+kube-master02-ip=192.168.30.14
+
+[kube-nodes:vars]
+kube-node01-iface=eno49
+kube-node01-ip=192.168.30.15
+kube-node02-iface=ens2f0
+kube-node02-ip=192.168.30.16
 ```
 
  - Have to changed your own password at `add_user_password` field in `group_vars/all` file
