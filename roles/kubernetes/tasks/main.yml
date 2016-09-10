@@ -24,13 +24,13 @@
   group: name=kube-cert state=present
 
 - name: Make cert file
-  command: /home/{{ add_user }}/go_workspace/src/k8s.io/kubernetes/cluster/saltbase/salt/generate-cert/make-cert.sh
+  command: /home/{{ add_user }}/{{ gopath_dir }}/src/k8s.io/kubernetes/cluster/saltbase/salt/generate-cert/make-cert.sh
   become: yes
   become_user: root
   when: "'kube-deploy' in group_names"
 
 - name: Make ca-cert file
-  command: /home/{{ add_user }}/go_workspace/src/k8s.io/kubernetes/cluster/saltbase/salt/generate-cert/make-ca-cert.sh {{ kube_api_ip }}
+  command: /home/{{ add_user }}/{{ gopath_dir }}/src/k8s.io/kubernetes/cluster/saltbase/salt/generate-cert/make-ca-cert.sh {{ kube_api_ip }}
   become: yes
   become_user: root
   when: "'kube-deploy' in group_names"

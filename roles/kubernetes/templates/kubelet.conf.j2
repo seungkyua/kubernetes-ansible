@@ -1,10 +1,6 @@
 KUBELET_OPTS="--address=0.0.0.0 \
 --port=10250 \
-{% if inventory_hostname == 'kube-node01' %}
---hostname-override={{ hostvars[inventory_hostname]['ansible_' + node01_iface]['ipv4']['address'] }} \
-{% else %}
---hostname-override={{ hostvars[inventory_hostname]['ansible_' + node02_iface]['ipv4']['address'] }} \
-{% endif %}
+--hostname-override={{ hostvars[inventory_hostname][inventory_hostname + '-ip'] }} \
 --api-servers=http://{{ kube_api_ip }}:8080 \
 --logtostderr=true \
 --cluster-dns={{ cluster_dns }} \

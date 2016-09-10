@@ -1,4 +1,3 @@
 ---
 - name: restart etcd
   service: name=etcd state=restarted
-#  when: started_etcd.changed == false

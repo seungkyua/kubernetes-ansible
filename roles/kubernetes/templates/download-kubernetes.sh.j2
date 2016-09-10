@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GO_HOME=${HOME}/go_workspace
+GO_HOME=${HOME}/{{ gopath_dir }}
 KUBE_HOME=${GO_HOME}/src/k8s.io/kubernetes
 KUBE_VERSION="{{ kube_version }}"
 ANSIBLE_HOME=${HOME}/{{ ansible_dir }}

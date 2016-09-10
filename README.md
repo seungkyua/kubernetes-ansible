@@ -48,6 +48,7 @@ $ mkpasswd --method=SHA-512
 $ sudo ansible-playbook -i hosts 00-create-user.yml
 $ sudo ansible-playbook -i hosts 00-install-package.yml
 $ sudo ansible-playbook -i hosts 01-install-docker.yml
+$ sudo chown -R stack.stack ~/.ansible
 $ ansible-playbook -i hosts 02-etcd.yml
 $ ansible-playbook -i hosts 03-flannel.yml
 $ ansible-playbook -i hosts 04-kubernetes.yml

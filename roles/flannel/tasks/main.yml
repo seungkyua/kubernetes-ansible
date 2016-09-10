@@ -42,12 +42,9 @@
   when: "'kube-nodes' in group_names"
 
 - name: Resize MTU
-  command: ip link set dev {{ hostvars[inventory_hostname]['ansible_' + node01_iface]['device'] }} mtu 1500
-  when: inventory_hostname == 'kube-node01'
-
-- name: Resize MTU
-  command: ip link set dev {{ hostvars[inventory_hostname]['ansible_' + node02_iface]['device'] }} mtu 1500
-  when: inventory_hostname == 'kube-node02'
+  command: ip link set dev {{ hostvars[item][item + '-iface'] }} mtu {{ mtu_size }}
+  with_items: groups['kube-nodes']
+  when: "'kube-nodes' in group_names"
 
 - name: Copy flanneld config file
   template: src=flanneld.j2 dest=/etc/default/flanneld

@@ -4,12 +4,9 @@
 
 - name: Write etcd config file
   template: src=etcd.conf.j2 dest=/etc/default/etcd
-#  notify:
-#    - restart etcd
 
 - name: Enable etcd
   service: name=etcd enabled=yes
 
 - name: Restart etcd
   service: name=etcd state=restarted
-#  register: started_etcd
