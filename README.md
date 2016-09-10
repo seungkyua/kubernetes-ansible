@@ -42,3 +42,13 @@ $ mkpasswd --method=SHA-512
 ```
 
 
+## Execute order ##
+
+```
+$ sudo ansible-playbook -i hosts 00-create-user.yml
+$ sudo ansible-playbook -i hosts 00-install-package.yml
+$ sudo ansible-playbook -i hosts 01-install-docker.yml
+$ ansible-playbook -i hosts 02-etcd.yml
+$ ansible-playbook -i hosts 03-flannel.yml
+$ ansible-playbook -i hosts 04-kubernetes.yml
+```
