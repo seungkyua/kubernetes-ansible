@@ -31,7 +31,7 @@
     - name: export KUBE_ROOT
       lineinfile:
         "dest=/home/{{ add_user }}/.bashrc state=present regexp='^export KUBE_ROOT'
-         line='export KUBE_ROOT=/home/$HOME/{{ gopath_dir }}/src/k8s.io/kubernetes'"
+         line='export KUBE_ROOT=$HOME/{{ gopath_dir }}/src/k8s.io/kubernetes'"
 
     - name: Copy hosts file
       copy:
