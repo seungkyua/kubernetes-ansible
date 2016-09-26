@@ -17,7 +17,7 @@
     - name: sudo 
       lineinfile:
         "dest=/etc/sudoers state=present regexp='^{{ add_user }} ALL='
-	 line='{{ add_user }} ALL=(ALL) NOPASSWD:ALL' validate='visudo -cf %s'"
+         line='{{ add_user }} ALL=(ALL) NOPASSWD:ALL' validate='visudo -cf %s'"
 
     - name: export GOPATH
       lineinfile:
