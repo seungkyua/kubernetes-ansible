@@ -15,3 +15,27 @@
         - gcc
         - curl
         - git
+        - ntp
+        - ntpdate
+
+    -  replace: dest=/etc/ntp.conf regexp='^pool (\d).ubuntu.pool.ntp.org iburst$' replace='#pool [0-3].ubuntu.pool.ntp.org iburst'
+
+    -  replace: dest=/etc/ntp.conf regexp='^pool ntp.ubuntu.com$' replace='server time.bora.net iburst'
+       when: "'kube-deploy' in group_names"
+
+    -  replace: dest=/etc/ntp.conf regexp='^restrict 127.0.0.1$' replace='restrict 192.168.0.0 mask 255.255.0.0 nomodify notrap'
+       when: "'kube-deploy' in group_names"
+
+    -  replace: dest=/etc/ntp.conf regexp='^pool ntp.ubuntu.com$' replace='pool {{ ntp_master_ip }}'
+       when: "('kube-masters' in group_names) or ('kube-nodes' in group_names)"
+
+    - name: Restart NTP Server
+      service: name=ntp state=restarted enabled=yes
+
+    - name: Sync Master NTP time
+      command: 'ntpdate -u time.bora.net'
+      when: "'kube-deploy' in group_names"
+
+    - name: Sync Slave NTP time
+      command: 'ntpdate -u {{ ntp_master_ip }}'
+      when: "('kube-masters' in group_names) or ('kube-nodes' in group_names)"
